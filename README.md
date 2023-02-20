@@ -1,4 +1,4 @@
-# Home Sweet Cluster
+# K8s Sweet Home
 
 A quick and automated way to setup a Kubernetes cluster with Ansible using multiple RaspberryPi boards.
 

@@ -1,0 +1,174 @@
+# Host configuration
+
+- name: Configuring host (1/7)...
+  tags: setup
+  copy:
+    src: containerd.conf
+    dest: /etc/modules-load.d/containerd.conf
+
+- name: Configuring host (2/7)...
+  tags: setup
+  modprobe:
+    name: overlay
+    state: present
+
+- name: Configuring host (3/7)...
+  tags: setup
+  modprobe:
+    name: br_netfilter
+    state: present
+
+- name: Configuring host (4/7)...
+  tags: setup
+  copy:
+    src: cmdline.txt
+    dest: /boot/firmware/cmdline.txt
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Configuring host (5/7)...
+  tags: setup
+  copy:
+    src: k8s.conf
+    dest: /etc/sysctl.d/k8s.conf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Configuring host (6/7)...
+  tags: setup
+  copy:
+    src: k8s.conf
+    dest: /etc/sysctl.conf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Configuring host (7/7)...
+  tags: setup
+  ansible.builtin.shell:
+    cmd: |
+      sysctl --system
+
+
+# Containerd installation
+
+- name: Installing containerd (1/7)...
+  tags: containerd
+  become: true
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+  register: containerd_apt_key
+  until: containerd_apt_key is succeeded
+  retries: 5
+  delay: 5
+
+- name: Installing containerd (2/7)...
+  tags: containerd
+  ansible.builtin.apt_repository:
+    repo: deb  https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable
+    state: present
+    update_cache: true
+    mode: 0644
+    filename: /etc/apt/sources.list.d/containerd
+
+- name: Installing containerd (3/7)...
+  tags: containerd
+  apt:
+    update_cache: yes
+
+- name: Installing containerd (4/7)...
+  tags: containerd
+  apt:
+    name: containerd.io
+    state: latest
+
+- name: Installing containerd (5/7)...
+  tags: containerd
+  ansible.builtin.file:
+    path: /etc/containerd
+    state: directory
+    mode: '0755'
+
+- name: Installing containerd (6/7)...
+  tags: containerd
+  ansible.builtin.shell:
+    cmd: |
+      containerd config default | tee /etc/containerd/config.toml >/dev/null 2>&1
+      sed -i 's/SystemdCgroup \= false/SystemdCgroup \= true/g' /etc/containerd/config.toml
+
+# Required due to a bug on containerd version installed on focal fossa distro
+- name: Installing containerd (extra step for focal distro)...
+  tags: containerd
+  ansible.builtin.file:
+    path: /etc/containerd/config.toml
+    state: absent
+  when: ansible_distribution_release == "focal"
+
+- name: Installing containerd (7/7)...
+  tags: containerd
+  ansible.builtin.systemd:
+    name: containerd
+    state: restarted
+    enabled: true
+
+
+# K8s packages installation
+
+- name: Installing k8s (1/7)...
+  tags: kubernetes
+  become: true
+  apt_key:
+    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
+    state: present
+  register: k8s_apt_key
+  until: k8s_apt_key is succeeded
+  retries: 5
+  delay: 5
+
+- name: Installing k8s (2/7)...
+  tags: kubernetes
+  ansible.builtin.apt_repository:
+    repo: deb https://apt.kubernetes.io/ kubernetes-xenial main # Substitute with {{ ansible_distribution_release }} when new releases will be added
+    state: present
+    update_cache: true
+    mode: 0644
+    filename: /etc/apt/sources.list.d/kubernetes
+
+- name: Installing k8s (3/7)...
+  tags: kubernetes
+  apt:
+    update_cache: yes
+
+- name: Installing k8s (4/7)...
+  tags: kubernetes
+  package:
+    name:
+      - kubelet={{k8s_version}}
+      - kubeadm={{k8s_version}}
+      - kubectl={{k8s_version}}
+      - ntp
+      - net-tools
+      - ipvsadm
+    #state: latest
+    update_cache: yes
+
+- name: Installing k8s (5/7)...
+  tags: kubernetes
+  dpkg_selections:
+    name: kubeadm
+    selection: hold
+
+- name: Installing k8s (6/7)...
+  tags: kubernetes
+  dpkg_selections:
+    name: kubelet
+    selection: hold
+
+- name: Installing k8s (7/7)...
+  tags: kubernetes
+  dpkg_selections:
+    name: kubectl
+    selection: hold

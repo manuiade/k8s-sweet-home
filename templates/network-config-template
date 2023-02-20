@@ -1,0 +1,21 @@
+network:
+  version: 2
+  ethernets:
+    eth0:
+      dhcp4: true
+      optional: true
+  wifis:
+    wlan0:
+      optional: true
+      addresses: 
+        - <YOUR_IP_ADDRESS>
+      nameservers:
+        addresses: [8.8.8.8, 8.8.4.4]
+      routes:
+        - to: default
+          via: <YOUR_GATEWAY_ADDRESS>
+      access-points:
+        <YOUR_NETWORK_SSID>:
+          password: <YOUR_WIFI_PASSWORD>
+
+      

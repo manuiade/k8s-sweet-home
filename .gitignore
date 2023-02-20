@@ -1,0 +1,8 @@
+local-requirements/
+nodes/
+os/
+other/
+ssh/
+ansible/static/
+ansible/inventory
+config.ini

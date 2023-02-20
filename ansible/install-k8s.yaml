@@ -1,0 +1,35 @@
+- hosts: all
+  become: yes
+  pre_tasks:
+    - name: Restarting hosts...
+      tags: pre
+      reboot:
+        msg: "Reboot initiated by Ansible"
+        connect_timeout: 5
+        reboot_timeout: 300
+        pre_reboot_delay: 0
+        post_reboot_delay: 60
+
+    - name: Update system packages...
+      tags: pre
+      apt:
+        upgrade: yes # No dist upgrade
+        update_cache: yes
+
+- hosts: all
+  become: yes
+  roles:
+    - role: k8s-containerd
+      tags: [k8s-containerd]
+
+- hosts: master
+  become: yes
+  roles:
+    - role: master
+      tags: [master, k8s]
+
+- hosts: workers
+  become: true
+  roles:
+    - role: worker
+      tags: [worker, k8s]

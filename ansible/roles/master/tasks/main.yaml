@@ -1,0 +1,70 @@
+- name: Setup master node (1/8)...
+  tags:
+   - k8s
+   - master
+  ansible.builtin.shell:
+    cmd: |
+      KUBERNETES_VERSION=$(kubeadm version | grep -oP '(^|[ ,])GitVersion:\K[^,]*' | tr -d \")
+      kubeadm init --token=${TOKEN} --kubernetes-version=${KUBERNETES_VERSION} --pod-network-cidr=10.244.0.0/16
+    creates: /etc/kubernetes/kubelet.conf
+  register: k8sinit_output
+
+- name: Setup master node (2/8)...
+  tags:
+   - k8s
+   - master
+  ansible.builtin.copy:
+    content: '{{ k8sinit_output.stdout }}'
+    dest: cluster_join_file
+  when: '"token" in k8sinit_output.stdout'
+
+- name: Setup master node (3/8)...
+  tags:
+   - k8s
+   - master
+  ansible.builtin.fetch:
+    flat: yes
+    src: cluster_join_file
+    dest: static/token_file
+  when: '"token" in k8sinit_output.stdout'
+
+- name: Setup master node (4/8)...
+  tags:
+   - k8s
+   - master
+  file:
+    path: $HOME/.kube
+    state: directory
+    mode: 0755
+
+- name: Setup master node (5/8)...
+  tags:
+   - k8s
+   - master
+  ansible.builtin.shell:
+    cmd: |
+      cp /etc/kubernetes/admin.conf $HOME/.kube/config
+      chown $(id -u):$(id -g) $HOME/.kube/config
+
+- name: Setup master node (6/8)...
+  tags:
+   - k8s
+   - master
+  ansible.builtin.fetch:
+    flat: yes
+    src: $HOME/.kube/config
+    dest: static/kubeconfig
+
+- name: Setup master node (7/8)...
+  ansible.builtin.pause:
+    minutes: 1
+
+- name: Setup master node (8/8)...
+  tags:
+   - k8s
+   - master
+  shell:
+    cmd: |
+      kubectl taint node master node-role.kubernetes.io/master:NoSchedule-
+      kubectl label nodes master node-type=master
+      kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.25.0/manifests/calico.yaml

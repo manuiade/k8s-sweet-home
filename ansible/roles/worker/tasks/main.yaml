@@ -1,0 +1,19 @@
+- name: Setup worker nodes (1/2)...
+  tags:
+   - k8s
+   - worker
+  ansible.builtin.copy:
+    src: static/token_file
+    dest: /root/cluster_token_file
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Setup worker nodes (2/2)...
+  tags:
+   - k8s
+   - worker
+  ansible.builtin.shell:
+    cmd: |
+      cat /root/cluster_token_file | tail -2 > join.sh
+      sh join.sh

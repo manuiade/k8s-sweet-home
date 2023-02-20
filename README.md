@@ -44,6 +44,7 @@ You can now configure your node files, including network information, hostname, 
 <b>IMPORTANT</b>
 
 <b>---------</b>
+
 Note that in the 01_node_configuration.sh script <b>YOU</b> need to substitute the 2 offset value of the /boot sector and / sector with the specific value of your downloaded image (lines 4 and 5 of the script).
 You can use the command:
 
@@ -56,6 +57,7 @@ to get the partition sector, then multiply the Start column value by the block s
 Image mount (via mount command) also requires root privileges in order to be executed (local mnt folder will be used).
 
 A more elegant solution will be soon provided (note that the preset values should work with all the ubuntu images)
+
 <b>---------</b>
 
 The script creates the custom configuration files for each node and recompress the images to make them ready to be flashed on SD cards:

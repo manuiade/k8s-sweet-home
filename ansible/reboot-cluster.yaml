@@ -1,7 +1,7 @@
 - hosts: all
   become: true
   tasks:
-    - name: Restarting hosts (1/3)...
+    - name: Restarting hosts...
       reboot:
         msg: "Reboot initiated by Ansible"
         connect_timeout: 5
@@ -10,14 +10,30 @@
         post_reboot_delay: 60
         test_command: whoami
 
-    - name: Restarting hosts (2/3)...
+    - name: Configuring host (1/4)...
+      modprobe:
+        name: overlay
+        state: present
+
+    - name: Configuring host (2/4)...
       modprobe:
         name: br_netfilter
         state: present
 
-    - name: Restarting hosts (3/3)...
+    - name: Configuring host (3/4)...
+      modprobe:
+        name: dummy
+        state: present
+
+    - name: Restarting hosts (4/4)...
       ansible.builtin.shell:
         cmd: |
           ip link set dev eth0 promisc on
+          ip link set dev wlan0 promisc on
           swapoff -a
           sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+
+    - name: Restarting hosts (4/4)...
+      ansible.builtin.shell:
+        cmd: |
+          sysctl --system

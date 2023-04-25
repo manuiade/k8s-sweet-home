@@ -8,10 +8,10 @@
 - name: Configuring host (2/11)...
   tags: setup
   apt:
-    pkg:
-    - linux-image-{{uname_r}}
-    - linux-modules-{{uname_r}}
-    - linux-modules-extra-{{uname_r}}
+    name:
+    - linux-image-{{uname_r.stdout}}
+    - linux-modules-{{uname_r.stdout}}
+    - linux-modules-extra-{{uname_r.stdout}}
 
 - name: Configuring host (3/11)...
   tags: setup

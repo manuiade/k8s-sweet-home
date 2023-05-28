@@ -1,4 +1,4 @@
-- name: Setup master node (1/8)...
+- name: Setup master node with Calico CNI (1/8)...
   tags:
    - k8s
    - master
@@ -8,6 +8,19 @@
       kubeadm init --token=${TOKEN} --kubernetes-version=${KUBERNETES_VERSION} --pod-network-cidr=10.244.0.0/16
     creates: /etc/kubernetes/kubelet.conf
   register: k8sinit_output
+  when: cni == "calico"
+
+- name: Setup master node with Cilium CNI (1/8)...
+  tags:
+   - k8s
+   - master
+  ansible.builtin.shell:
+    cmd: |
+      KUBERNETES_VERSION=$(kubeadm version | grep -oP '(^|[ ,])GitVersion:\K[^,]*' | tr -d \")
+      kubeadm init --token=${TOKEN} --kubernetes-version=${KUBERNETES_VERSION} --pod-network-cidr=10.244.0.0/16 --skip-phases=addon/kube-proxy
+    creates: /etc/kubernetes/kubelet.conf
+  register: k8sinit_output
+  when: cni == "cilium"
 
 - name: Setup master node (2/8)...
   tags:
@@ -67,4 +80,12 @@
     cmd: |
       kubectl taint node master node-role.kubernetes.io/master:NoSchedule-
       kubectl label nodes master node-type=master
+
+- name: Installing required CNI (1/1)...
+  tags:
+   - k8s
+   - master
+  shell:
+    cmd: |
       kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.25.0/manifests/calico.yaml
+  when: cni == "calico"

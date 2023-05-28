@@ -28,6 +28,7 @@ We will be using the following software to manage all the installations:
 
 - <b>Ansible</b> to execute the playbooks for configuring the cluster on master and all worker nodes
 - <b>Kubectl</b> to communicate with your master endpoint (use a version >= 1.22.0)
+- <b>Cilium CLI </b> to install Cilium as CNI if required
 
 Ubuntu server pre-built images are used in order to speed up the installation process. The first script also provides instructions to download the image
 
@@ -85,7 +86,7 @@ An Ansible playbook will take care of all the operations needed, so you just nee
 ./02_install_k8s.sh
 ```
 
-After the playbook has completed you'll already have a fully functioning k8s cluster, with containerd as container engine and kubernetes with calico as CNI plugin.
+After the playbook has completed you'll already have a fully functioning k8s cluster, with containerd as container engine and kubernetes with calico|cilium as CNI plugin.
 
 You will find the kubeconfig file needed to access the cluster at ./ansible/static/kubeconfig
 
@@ -97,6 +98,27 @@ kubectl --kubeconfig ./ansible/static/kubeconfig get nodes
 
 <b> Now you are ready to deploy your workloads to kubernetes!! </b>
 
+
+### Cilium Installation
+
+If you chose the Cilium CNI, after ansible setup you have to install to your cluster cilium components.
+In order to do so update your local kubeconfig (usually $HOME/.kube/config) to include the cluster kubeconfig (./ansible/static/kubeconfig), then run:
+
+```
+cd local-requirements
+
+# Install cilium
+./cilium install
+
+# Validate that Cilium installation
+./cilium status --wait
+
+# Enable Cilium Hubble
+./cilium hubble enable --ui
+
+# Validate that your cluster has proper network connectivity
+./cilium connectivity test
+```
 
 ## Cluster Management
 

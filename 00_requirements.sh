@@ -8,6 +8,7 @@ function local_requirements_installation {
 
   # K8s cluster version downloaded from ansible playbook
   sed -i "2s/.*/k8s_version: $k8s_version-00/g" ../ansible/roles/k8s-containerd/vars/main.yaml
+  sed -i "2s/.*/cni: $cni/g" ../ansible/roles/master/vars/main.yaml
 
   # Local ansible installation (required Python 3 and pip binaries)
   echo "Installing Ansible on local machine..."
@@ -18,6 +19,24 @@ function local_requirements_installation {
   curl -LO "https://dl.k8s.io/release/v${k8s_version}/bin/linux/amd64/kubectl"
   chmod +x kubectl
 
+  # Local cilium CLI installation
+  if [ "$cni" = "cilium" ]; then
+    echo "Installing cilium CLI and Hubble on local machine..."
+    CILIUM_CLI_VERSION=$(curl -s https://raw.githubusercontent.com/cilium/cilium-cli/master/stable.txt)
+    CLI_ARCH=amd64
+    curl -L --fail --remote-name-all https://github.com/cilium/cilium-cli/releases/download/${CILIUM_CLI_VERSION}/cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
+    sha256sum --check cilium-linux-${CLI_ARCH}.tar.gz.sha256sum
+    tar xzvfC cilium-linux-${CLI_ARCH}.tar.gz ./
+    rm cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
+  
+    export HUBBLE_VERSION=$(curl -s https://raw.githubusercontent.com/cilium/hubble/master/stable.txt)
+    curl -L --remote-name-all https://github.com/cilium/hubble/releases/download/$HUBBLE_VERSION/hubble-linux-amd64.tar.gz{,.sha256sum}
+    sha256sum --check hubble-linux-amd64.tar.gz.sha256sum
+    tar xzvfC hubble-linux-amd64.tar.gz ./
+    rm hubble-linux-amd64.tar.gz{,.sha256sum}
+  fi
+
+  
   # FOR FUTURE USAGE
   
   # # Local Terraform installation (based on provided version)

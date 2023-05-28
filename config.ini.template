@@ -2,8 +2,9 @@
 ubuntu_image=20.04
 ubuntu_download_url=https://cdimage.ubuntu.com/ubuntu-server/focal/daily-preinstalled/current/focal-preinstalled-server-arm64+raspi.img.xz
 
-[KUBERNETES-VERSION]
+[KUBERNETES]
 k8s_version=1.26.0
+cni=cilium
 
 [WI-FI]
 ssid_name="<YOUR_SSID_NAME>"

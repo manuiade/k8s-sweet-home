@@ -154,6 +154,8 @@ In the future support for using these tools will also be added:
 
 ## k8s Tools
 
+- [ ] Cilium as eBPF with Hubble observability
+
 - [ ] Kubernetes Dashboard setup
 
 - [ ] Metal load balancer setup

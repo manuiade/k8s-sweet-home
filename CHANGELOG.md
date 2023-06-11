@@ -2,6 +2,23 @@
 
 All changes to this repository will be documented in this file.
 
+## [1.2.0] - 2023-06-11
+
+### Added
+
+Added the possibility to install additional components using Terraform scripts (kubectl provider) for:
+
+- Metallb (with L2 address pools specifying address range for Service Load Balancer objects)
+
+### Changed
+
+- 00_requirements.sh scripts now also install specified TF version in local-requiments folder
+
+- in config.ini you can now specify TF version to install locally
+
+- Cilium CNI with Hubble UI installation performed via script 03_cilium_install.sh
+
+
 ## [1.1.0] - 2023-05-28
 
 ### Added

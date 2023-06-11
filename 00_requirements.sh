@@ -36,15 +36,15 @@ function local_requirements_installation {
     rm hubble-linux-amd64.tar.gz{,.sha256sum}
   fi
 
-  
+  # Local Terraform installation (based on provided version)
+  echo "Installing terraform ${terraform_version} on local machine..."
+  wget https://releases.hashicorp.com/terraform/${terraform_version}/terraform_${terraform_version}_linux_amd64.zip
+  unzip terraform_${terraform_version}_linux_amd64.zip
+  rm terraform_${terraform_version}_linux_amd64.zip
+
+
   # FOR FUTURE USAGE
   
-  # # Local Terraform installation (based on provided version)
-  # echo "Installing terraform ${terraform_version} on local machine..."
-  # wget https://releases.hashicorp.com/terraform/${terraform_version}/terraform_${terraform_version}_linux_amd64.zip
-  # unzip terraform_${terraform_version}_linux_amd64.zip
-  # rm terraform_${terraform_version}_linux_amd64.zip
-
   # # Local Helm installation (based on provided version)
   # echo "Installing helm ${helm_version} on local machine..."
   # wget https://get.helm.sh/helm-v${helm_version}-linux-amd64.tar.gz

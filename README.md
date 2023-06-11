@@ -99,26 +99,33 @@ kubectl --kubeconfig ./ansible/static/kubeconfig get nodes
 <b> Now you are ready to deploy your workloads to kubernetes!! </b>
 
 
-### Cilium Installation
 
-If you chose the Cilium CNI, after ansible setup you have to install to your cluster cilium components.
-In order to do so update your local kubeconfig (usually $HOME/.kube/config) to include the cluster kubeconfig (./ansible/static/kubeconfig), then run:
+## Step 3 - Cilium Installation
+
+If you chose the Cilium CNI, after ansible setup you have to install to your cluster cilium components. In order to do so update your local kubeconfig (usually $HOME/.kube/config) to include the cluster kubeconfig (./ansible/static/kubeconfig), then run:
 
 ```
-cd local-requirements
-
-# Install cilium
-./cilium install
-
-# Validate that Cilium installation
-./cilium status --wait
-
-# Enable Cilium Hubble
-./cilium hubble enable --ui
-
-# Validate that your cluster has proper network connectivity
-./cilium connectivity test
+./03_cilium_install.sh
 ```
+
+
+## Step 4 - Cluster addons using Terraform
+
+A terraform directory has been provided to manage installation/uninstallation of additional components on k8s cluster.
+Currently the following components have been added:
+
+- Metallb (with L2 address pools specifying address range for Service Load Balancer objects)
+
+Navigate into the terraform directory and enable flags on the *terraform.tfvars* file based on the component you want to install using Terraform:
+
+```
+cd terraform
+# modify terraform.tfvars content
+../local-requirements/terraform init
+../local-requirements/terraform plan -out plan.out
+../local-requirements/terraform apply plan.out
+```
+
 
 ## Cluster Management
 
@@ -148,17 +155,14 @@ If something get screwed up with your k8s cluster, you can just use the kubeadm 
 
 In the future support for using these tools will also be added:
 
-- <b>Terraform</b> to manage the additional component installation
 - <b>Helm</b> to manage kubernetes applications repositories
 - <b>Lens</b> to easily connect to your cluster and manage workloads using a GUI
 
 ## k8s Tools
 
-- [ ] Cilium as eBPF with Hubble observability
+- [x] Cilium as eBPF with Hubble observability
 
-- [ ] Kubernetes Dashboard setup
-
-- [ ] Metal load balancer setup
+- [x] Metal load balancer setup
 
 - [ ] Traefik setup as Ingress Controller
 

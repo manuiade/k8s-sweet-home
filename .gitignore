@@ -7,3 +7,6 @@ ssh/
 ansible/static/
 ansible/inventory
 config.ini
+terraform/.terraform*
+terraform/*.tfstate*
+terraform/*plan*

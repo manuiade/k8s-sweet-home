@@ -29,6 +29,7 @@ We will be using the following software to manage all the installations:
 - <b>Ansible</b> to execute the playbooks for configuring the cluster on master and all worker nodes
 - <b>Kubectl</b> to communicate with your master endpoint (use a version >= 1.22.0)
 - <b>Cilium CLI </b> to install Cilium as CNI if required
+- <b>Terraform </b> to manage addons (metallb, monitoring ecc.) installed on the k8s cluster after setup
 
 Ubuntu server pre-built images are used in order to speed up the installation process. The first script also provides instructions to download the image
 

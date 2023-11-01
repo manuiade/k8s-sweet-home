@@ -1,11 +1,11 @@
 # Host configuration
 
-- name: Configuring host (1/11)...
+- name: Configuring host (1/12)...
   tags: setup
   command: 'uname -r'
   register: uname_r
 
-- name: Configuring host (2/11)...
+- name: Configuring host (2/12)...
   tags: setup
   apt:
     name:
@@ -13,31 +13,37 @@
     - linux-modules-{{uname_r.stdout}}
     - linux-modules-extra-{{uname_r.stdout}}
 
-- name: Configuring host (3/11)...
+- name: Configuring host (3/12)...
+  tags: setup
+  apt:
+    name:
+    - nfs-kernel-server
+
+- name: Configuring host (4/12)...
   tags: setup
   copy:
     src: containerd.conf
     dest: /etc/modules-load.d/containerd.conf
 
-- name: Configuring host (4/11)...
+- name: Configuring host (5/12)...
   tags: setup
   modprobe:
     name: overlay
     state: present
 
-- name: Configuring host (5/11)...
+- name: Configuring host (6/12)...
   tags: setup
   modprobe:
     name: br_netfilter
     state: present
 
-- name: Configuring host (6/11)...
+- name: Configuring host (7/12)...
   tags: setup
   modprobe:
     name: dummy
     state: present
 
-- name: Configuring host (7/11)...
+- name: Configuring host (8/12)...
   tags: setup
   copy:
     src: cmdline.txt
@@ -46,7 +52,7 @@
     group: root
     mode: 0644
 
-- name: Configuring host (8/11)...
+- name: Configuring host (9/12)...
   tags: setup
   copy:
     src: k8s.conf
@@ -55,7 +61,7 @@
     group: root
     mode: 0644
 
-- name: Configuring host (9/11)...
+- name: Configuring host (10/12)...
   tags: setup
   copy:
     src: k8s.conf
@@ -64,7 +70,7 @@
     group: root
     mode: 0644
 
-- name: Configuring host (10/11)...
+- name: Configuring host (11/12)...
   tags: setup
   ansible.builtin.shell:
     cmd: |
@@ -73,7 +79,7 @@
       swapoff -a
       sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
 
-- name: Configuring host (11/11)...
+- name: Configuring host (12/12)...
   tags: setup
   ansible.builtin.shell:
     cmd: |

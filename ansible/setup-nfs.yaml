@@ -1,0 +1,20 @@
+- hosts: all
+  become: yes
+  pre_tasks:
+    - name: Update system packages...
+      tags: pre
+      apt:
+        upgrade: yes
+        update_cache: yes
+
+- hosts: master
+  become: yes
+  roles:
+  - role: master
+
+- hosts: workers
+  become: yes
+  roles:
+  - role: worker
+    vars:
+       nfs_device_path: "{{ nfs_device_path }}"

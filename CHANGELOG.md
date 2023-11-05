@@ -2,6 +2,21 @@
 
 All changes to this repository will be documented in this file.
 
+## [1.3.0] - 2023-11-05
+
+### Added
+
+Added the possibility to setup NFS server on host machine with a dedicated ansible playbook. Usage is documented in README.md as "Step 4"
+
+### Changed
+
+- Master and worker roles now include tasks and vars to setup NFS client and server
+
+- in config.ini you can now specify nfs_volume_path to mount the NFS server on master node (see README.md for details)
+
+- Adjustments in tag definition in roles to distinguish between k8s and nfs steps
+
+
 ## [1.2.0] - 2023-06-11
 
 ### Added

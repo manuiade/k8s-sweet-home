@@ -1,7 +1,6 @@
 - name: Setup master node with Calico CNI (1/8)...
   tags:
    - k8s
-   - master
   ansible.builtin.shell:
     cmd: |
       KUBERNETES_VERSION=$(kubeadm version | grep -oP '(^|[ ,])GitVersion:\K[^,]*' | tr -d \")
@@ -13,7 +12,6 @@
 - name: Setup master node with Cilium CNI (1/8)...
   tags:
    - k8s
-   - master
   ansible.builtin.shell:
     cmd: |
       KUBERNETES_VERSION=$(kubeadm version | grep -oP '(^|[ ,])GitVersion:\K[^,]*' | tr -d \")
@@ -25,7 +23,6 @@
 - name: Setup master node (2/8)...
   tags:
    - k8s
-   - master
   ansible.builtin.copy:
     content: '{{ k8sinit_output.stdout }}'
     dest: cluster_join_file
@@ -34,7 +31,6 @@
 - name: Setup master node (3/8)...
   tags:
    - k8s
-   - master
   ansible.builtin.fetch:
     flat: yes
     src: cluster_join_file
@@ -44,7 +40,6 @@
 - name: Setup master node (4/8)...
   tags:
    - k8s
-   - master
   file:
     path: $HOME/.kube
     state: directory
@@ -53,7 +48,6 @@
 - name: Setup master node (5/8)...
   tags:
    - k8s
-   - master
   ansible.builtin.shell:
     cmd: |
       cp /etc/kubernetes/admin.conf $HOME/.kube/config
@@ -62,7 +56,6 @@
 - name: Setup master node (6/8)...
   tags:
    - k8s
-   - master
   ansible.builtin.fetch:
     flat: yes
     src: $HOME/.kube/config
@@ -75,7 +68,6 @@
 - name: Setup master node (8/8)...
   tags:
    - k8s
-   - master
   shell:
     cmd: |
       kubectl taint node master node-role.kubernetes.io/master:NoSchedule-
@@ -84,8 +76,56 @@
 - name: Installing required CNI (1/1)...
   tags:
    - k8s
-   - master
   shell:
     cmd: |
       kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.25.0/manifests/calico.yaml
   when: cni == "calico"
+
+
+### NFS Server
+
+- name: Setup NFS Server (1/6)...
+  tags:
+  - nfs
+  file:
+    path: /mnt/nfs
+    state: directory
+
+- name: Setup NFS Server (2/6)...
+  tags:
+  - nfs
+  package:
+    name:
+      - nfs-kernel-server
+    update_cache: yes
+
+- name: Setup NFS Server (3/6)...
+  tags:
+  - nfs
+  ansible.builtin.service:
+    name: nfs-server
+    enabled: yes
+
+- name: Setup NFS Server (4/6)...
+  tags:
+  - nfs
+  ansible.posix.mount:
+    path: /mnt/nfs
+    src: "{{ nfs_device_path }}"
+    fstype: ext4
+    opts: rw,defaults,noatime,nodiratime
+    state: mounted
+
+- name: Setup NFS Server (5/6)...
+  tags:
+  - nfs
+  copy:
+    src: files/exports
+    dest: /etc/exports
+
+- name: Setup NFS Server (6/6)...
+  tags:
+  - nfs
+  ansible.builtin.service:
+    name: nfs-server
+    state: restarted

@@ -1,0 +1,6 @@
+- hosts: all
+  become: true
+  tasks:
+    - name: Shut down machines after 30 seconds
+      community.general.shutdown:
+        delay: 30

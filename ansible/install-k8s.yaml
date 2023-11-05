@@ -28,17 +28,14 @@
 - hosts: all
   become: yes
   roles:
-    - role: k8s-containerd
-      tags: [k8s-containerd]
+  - role: k8s-containerd
 
 - hosts: master
   become: yes
   roles:
-    - role: master
-      tags: [master, k8s]
+  - role: master
 
 - hosts: workers
   become: true
   roles:
-    - role: worker
-      tags: [worker, k8s]
+  - role: worker

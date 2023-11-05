@@ -101,7 +101,7 @@ kubectl --kubeconfig ./ansible/static/kubeconfig get nodes
 
 
 
-## Step 3 - Cilium Installation
+## [OPTIONAL] Step 3 - Cilium Installation
 
 If you chose the Cilium CNI, after ansible setup you have to install to your cluster cilium components. In order to do so update your local kubeconfig (usually $HOME/.kube/config) to include the cluster kubeconfig (./ansible/static/kubeconfig), then run:
 
@@ -109,8 +109,23 @@ If you chose the Cilium CNI, after ansible setup you have to install to your clu
 ./03_cilium_install.sh
 ```
 
+## [OPTIONAL] Step 4 - Install NFS Server
 
-## Step 4 - Cluster addons using Terraform
+A dedicated playbook is provided to setup a NFS server and clients in the following manner:
+
+- The playbook expects that the block device used as NFS volume is plugged into the k8s master board, which will be designed as NFS server. The playbook use a dedicated role to setup the NFS server required software, mount the disk on the /mnt/nfs mountpoint, configure /etc/exports
+
+- N.B. The /etc/exports file will be loaded from the ansible location *ansible/roles/master/files/exports* with a sample configuration, feel free to change it based on your needs
+
+- The other k8s worker boards will be eventually the NFS client from kubernetes workloads, and a dedicated role simply install the nfs-common packages to ensure mount via kubernetes works
+
+Before running the playbook via the provided script, update the *config.ini* file inserting the device path of the disk inserted into the master board (simply run a lsblk command on the master board to find the path, usually /dev/sda1 for the first disk), then simply run:
+
+```
+./04_setup_nfs.sh
+```
+
+## [OPTIONAL] Step 5 - Cluster addons using Terraform
 
 A terraform directory has been provided to manage installation/uninstallation of additional components on k8s cluster.
 Currently the following components have been added:
@@ -120,8 +135,8 @@ Currently the following components have been added:
 Navigate into the terraform directory and enable flags on the *terraform.tfvars* file based on the component you want to install using Terraform:
 
 ```
-cd terraform
 # modify terraform.tfvars content
+cd terraform
 ../local-requirements/terraform init
 ../local-requirements/terraform plan -out plan.out
 ../local-requirements/terraform apply plan.out
@@ -167,7 +182,7 @@ In the future support for using these tools will also be added:
 
 - [ ] Traefik setup as Ingress Controller
 
-- [ ] NFS Volumes
+- [ ] NFS Volumes (external-subdir for NFS dynamic provisioning via PVC)
 
 - [ ] Metric server, Prometheus and Grafana as monitoring tools (with Slack notifications)
 

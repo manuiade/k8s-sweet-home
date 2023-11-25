@@ -43,6 +43,25 @@ variable "cert_manager" {
   })
 }
 
+variable "prometheus" {
+  type = object({
+    install = bool
+    helm_chart = object({
+      name             = string
+      chart            = string
+      repository       = optional(string, null)
+      version          = optional(string, null)
+      namespace        = optional(string, "default")
+      create_namespace = optional(bool, false)
+      force_update     = optional(bool, false)
+      values           = optional(list(string), [])
+      set              = optional(map(string), {})
+    })
+    expose_prometheus_traefik = optional(bool, false)
+    expose_grafana_traefik = optional(bool, false)
+  })
+}
+
 variable "hello_nginx" {
   type = object({
     deployment = optional(bool, false)

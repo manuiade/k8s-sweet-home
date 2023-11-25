@@ -36,6 +36,20 @@ cert_manager = {
   deploy_sample_self_signed_crt = true
 }
 
+prometheus = {
+  install = true
+  helm_chart = {
+    name             = "prometheus"
+    chart            = "kube-prometheus-stack"
+    repository       = "https://prometheus-community.github.io/helm-charts"
+    namespace        = "prometheus"
+    create_namespace = true
+  }
+  expose_prometheus_traefik = true # need traefik and metallb to be installed
+  expose_grafana_traefik = true # need traefik and metallb to be installed
+  # grafana dashboards = 12740, 3119, 6417
+}
+
 hello_nginx = {
     deployment = true
     service = true

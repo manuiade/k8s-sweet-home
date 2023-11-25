@@ -4,10 +4,10 @@ metadata:
   name: test-example-com
 spec:
   isCA: true
-  commonName: test.example.com
-  secretName: test-example-com
+  commonName: test.k8s.home
+  secretName: test-k8s-home
   dnsNames:
-    - 'test.example.com'
+    - 'test.k8s.home'
   privateKey:
     algorithm: RSA
     encoding: PKCS1

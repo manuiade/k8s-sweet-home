@@ -20,6 +20,18 @@ module "cert_manager" {
   source     = "./modules/cert-manager"
   helm_chart = var.cert_manager.helm_chart
   deploy_sample_self_signed_crt = var.cert_manager.deploy_sample_self_signed_crt
+
+  depends_on = [ module.traefik ]
+}
+
+module "prometheus" {
+  count      = var.prometheus.install == true ? 1 : 0
+  source     = "./modules/prometheus"
+  helm_chart = var.prometheus.helm_chart
+  expose_prometheus_traefik = var.prometheus.expose_prometheus_traefik
+  expose_grafana_traefik = var.prometheus.expose_grafana_traefik
+
+  depends_on = [ module.cert_manager ]
 }
 
 module "hello_nginx" {
@@ -27,4 +39,6 @@ module "hello_nginx" {
   deployment = var.hello_nginx.deployment
   service = var.hello_nginx.service
   ingress_https = var.hello_nginx.ingress_https
+
+  depends_on = [ module.cert_manager ]
 }

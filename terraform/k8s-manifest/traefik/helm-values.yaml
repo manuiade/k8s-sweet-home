@@ -1,0 +1,89 @@
+providers:
+  kubernetesCRD:
+    enabled: true
+    allowCrossNamespace: true
+    allowExternalNameServices: false
+    allowEmptyServices: false
+    namespaces: []
+
+  kubernetesIngress:
+    enabled: true
+    allowExternalNameServices: false
+    allowEmptyServices: false
+    ingressClassName: traefik
+    namespaces: []
+
+dashboard:
+  enabled: true
+
+deployment:
+  enabled: true
+  kind: Deployment
+
+ingressRoute:
+  dashboard:
+    enabled: true
+
+logs:
+  general:
+    level: ERROR
+  access:
+    enabled: true
+
+additionalArguments: 
+  - "--api.dashboard=true"
+  - "--log.level=INFO"
+  - "--metrics.prometheus"
+  # - "--entrypoints.websecure.http.tls"
+  # - "--serversTransport.insecureSkipVerify=true"
+
+ports:
+  traefik:
+    port: 9000
+    expose: false
+    exposedPort: 9000
+    protocol: TCP
+  web:
+    port: 8000
+    expose: true
+    exposedPort: 80
+    protocol: TCP
+  websecure:
+    port: 8443
+    expose: true
+    exposedPort: 443
+    protocol: TCP
+    tls:
+      enabled: true
+service:
+  enabled: true
+  type: LoadBalancer
+  # externalTrafficPolicy: Local
+  externalIPs:
+    - 192.168.178.8 # Change to your first load-balancer ip
+
+# Traefik experimental features
+# experimental:
+#   # This value is no longer used, set the image.tag to a semver higher than 3.0, e.g. "v3.0.0-beta3"
+#   # v3:
+#   # -- Enable traefik version 3
+#   #  enabled: false
+#   plugins:
+#     # -- Enable traefik experimental plugins
+#     enabled: false
+#   kubernetesGateway:
+#     # -- Enable traefik experimental GatewayClass CRD
+#     enabled: false
+#     ## Routes are restricted to namespace of the gateway by default.
+#     ## https://gateway-api.sigs.k8s.io/references/spec/#gateway.networking.k8s.io/v1beta1.FromNamespaces
+#     # namespacePolicy: All
+#     # certificate:
+#     #   group: "core"
+#     #   kind: "Secret"
+#     #   name: "mysecret"
+#     # -- By default, Gateway would be created to the Namespace you are deploying Traefik to.
+#     # You may create that Gateway in another namespace, setting its name below:
+#     # namespace: default
+#     # Additional gateway annotations (e.g. for cert-manager.io/issuer)
+#     # annotations:
+#     #   cert-manager.io/issuer: letsencrypt

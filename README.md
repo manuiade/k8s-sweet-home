@@ -109,6 +109,7 @@ If you chose the Cilium CNI, after ansible setup you have to install to your clu
 ./03_cilium_install.sh
 ```
 
+
 ## [OPTIONAL] Step 4 - Install NFS Server
 
 A dedicated playbook is provided to setup a NFS server and clients in the following manner:
@@ -125,12 +126,16 @@ Before running the playbook via the provided script, update the *config.ini* fil
 ./04_setup_nfs.sh
 ```
 
+
 ## [OPTIONAL] Step 5 - Cluster addons using Terraform
 
 A terraform directory has been provided to manage installation/uninstallation of additional components on k8s cluster.
 Currently the following components have been added:
 
 - Metallb (with L2 address pools specifying address range for Service Load Balancer objects)
+- Traefik ingress controlloer (with dashboard exposition via ingress-route object)
+- Cert-manager (with sample self signed certificate provided)
+- Hello-nginx module (deploys a nginx deployment/service/ingress to test previously installed modules)
 
 Navigate into the terraform directory and enable flags on the *terraform.tfvars* file based on the component you want to install using Terraform:
 
@@ -146,6 +151,7 @@ cd terraform
 ## Cluster Management
 
 Some ansible playbooks are also provided to easily manage operations on the raspberry boards
+
 
 ### Reboot cluster
 
@@ -165,22 +171,13 @@ If something get screwed up with your k8s cluster, you can just use the kubeadm 
 
 # TODO
 
-## Step 3 (Extra) - Install additional Kubernetes components
-
-## Local binaries
-
-In the future support for using these tools will also be added:
-
-- <b>Helm</b> to manage kubernetes applications repositories
-- <b>Lens</b> to easily connect to your cluster and manage workloads using a GUI
-
 ## k8s Tools
 
 - [x] Cilium as eBPF with Hubble observability
 
 - [x] Metal load balancer setup
 
-- [ ] Traefik setup as Ingress Controller
+- [x] Traefik setup as Ingress Controller
 
 - [ ] NFS Volumes (external-subdir for NFS dynamic provisioning via PVC)
 

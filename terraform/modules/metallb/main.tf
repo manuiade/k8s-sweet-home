@@ -35,15 +35,19 @@ data "kubectl_file_documents" "metallb_objects" {
 resource "kubectl_manifest" "metallb" {
   for_each  = data.kubectl_file_documents.metallb_objects.manifests
   yaml_body = each.value
+
+  # lifecycle {
+  #   ignore_changes = [ yaml_incluster ]
+  # }
 }
 
 resource "time_sleep" "wait_for_metallb" {
-  create_duration = "30s"
+  create_duration = "60s"
   depends_on      = [kubectl_manifest.metallb]
 }
 
 data "kubectl_path_documents" "ip_address_pool" {
-  pattern = "${path.module}/ip-address-pool.yaml"
+  pattern = "${path.root}/k8s-manifest/metallb/ip-address-pool.yaml"
   vars = {
     LB_IP_RANGE = var.metallb_ip_range
   }
@@ -51,10 +55,10 @@ data "kubectl_path_documents" "ip_address_pool" {
 }
 
 resource "kubectl_manifest" "ip_address_pool" {
-  yaml_body  = data.kubectl_path_documents.ip_address_pool.documents[0]
+  yaml_body = data.kubectl_path_documents.ip_address_pool.documents[0]
 }
 
 resource "kubectl_manifest" "l2_advertisement" {
-  yaml_body =   file("${path.module}/l2-advertisement.yaml")
+  yaml_body  = file("${path.root}/k8s-manifest/metallb/l2-advertisement.yaml")
   depends_on = [kubectl_manifest.ip_address_pool]
 }

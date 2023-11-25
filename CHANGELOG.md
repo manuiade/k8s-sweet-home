@@ -2,6 +2,23 @@
 
 All changes to this repository will be documented in this file.
 
+## [1.4.0] - 2023-11-25
+
+### Added
+
+Added the possibility to install additional kubernetes components using Terraform scripts (kubectl provider) for:
+
+- Traefik as ingress controller (with optional dashboard ingressroute)
+
+- Cert-manager (with a sample self-signed certificate)
+
+### Changed
+
+- Configured TF Module to setup a hello-nginx deployment/service/ingress to test other installed modules
+
+- Small code refactoring
+
+
 ## [1.3.0] - 2023-11-05
 
 ### Added

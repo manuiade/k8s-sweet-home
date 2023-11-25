@@ -1,0 +1,17 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: test-example-com
+spec:
+  isCA: true
+  commonName: test.example.com
+  secretName: test-example-com
+  dnsNames:
+    - 'test.example.com'
+  privateKey:
+    algorithm: RSA
+    encoding: PKCS1
+    size: 2048
+  issuerRef:
+    name: self-signed-ca
+    kind: ClusterIssuer

@@ -1,16 +1,30 @@
 module "metallb" {
-  count                = var.install_metallb == true ? 1 : 0
+  count                = var.metallb.install == true ? 1 : 0
   source               = "./modules/metallb"
-  calico_cni           = var.calico_cni
-  metallb_manifest_url = var.metallb_manifest_url
-  metallb_ip_range     = var.metallb_ip_range
+  calico_cni           = var.metallb.calico_cni
+  metallb_manifest_url = var.metallb.manifest_url
+  metallb_ip_range     = var.metallb.ip_range
 }
 
-data "kubectl_file_documents" "nginx" {
-  content = file("${path.root}/nginx.yaml")
+module "traefik" {
+  count            = var.traefik.install == true ? 1 : 0
+  source           = "./modules/traefik"
+  helm_chart       = var.traefik.helm_chart
+  expose_dashboard = var.traefik.expose_dashboard
+
+  depends_on = [module.metallb]
 }
 
-resource "kubectl_manifest" "metallb" {
-  for_each  = data.kubectl_file_documents.nginx.manifests
-  yaml_body = each.value
+module "cert_manager" {
+  count      = var.cert_manager.install == true ? 1 : 0
+  source     = "./modules/cert-manager"
+  helm_chart = var.cert_manager.helm_chart
+  deploy_sample_self_signed_crt = var.cert_manager.deploy_sample_self_signed_crt
+}
+
+module "hello_nginx" {
+  source = "./modules/hello-nginx"
+  deployment = var.hello_nginx.deployment
+  service = var.hello_nginx.service
+  ingress_https = var.hello_nginx.ingress_https
 }

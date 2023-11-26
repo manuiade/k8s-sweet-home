@@ -2,6 +2,15 @@
 
 All changes to this repository will be documented in this file.
 
+## [1.5.0] - 2023-11-26
+
+### Added
+
+Added the possibility to install additional kubernetes components using Terraform scripts (kubectl provider) for:
+
+- Prometheus stack via Helm (Prometheus, node-exporter, grafana, alert-manager)
+
+
 ## [1.4.0] - 2023-11-25
 
 ### Added

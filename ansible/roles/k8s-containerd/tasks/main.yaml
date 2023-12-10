@@ -89,7 +89,7 @@
 # Containerd installation
 
 - name: Installing containerd (1/7)...
-  tags: containerd
+  tags: setup
   become: true
   apt_key:
     url: https://download.docker.com/linux/ubuntu/gpg
@@ -100,7 +100,7 @@
   delay: 5
 
 - name: Installing containerd (2/7)...
-  tags: containerd
+  tags: setup
   ansible.builtin.apt_repository:
     repo: deb  https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable
     state: present
@@ -109,25 +109,25 @@
     filename: /etc/apt/sources.list.d/containerd
 
 - name: Installing containerd (3/7)...
-  tags: containerd
+  tags: setup
   apt:
     update_cache: yes
 
 - name: Installing containerd (4/7)...
-  tags: containerd
+  tags: setup
   apt:
     name: containerd.io
     state: latest
 
 - name: Installing containerd (5/7)...
-  tags: containerd
+  tags: setup
   ansible.builtin.file:
     path: /etc/containerd
     state: directory
     mode: '0755'
 
 - name: Installing containerd (6/7)...
-  tags: containerd
+  tags: setup
   ansible.builtin.shell:
     cmd: |
       containerd config default | tee /etc/containerd/config.toml >/dev/null 2>&1
@@ -135,14 +135,14 @@
 
 # Required due to a bug on containerd version installed on focal fossa distro
 - name: Installing containerd (extra step for focal distro)...
-  tags: containerd
+  tags: setup
   ansible.builtin.file:
     path: /etc/containerd/config.toml
     state: absent
   when: ansible_distribution_release == "focal"
 
 - name: Installing containerd (7/7)...
-  tags: containerd
+  tags: setup
   ansible.builtin.systemd:
     name: containerd
     state: restarted
@@ -152,7 +152,7 @@
 # K8s packages installation
 
 - name: Installing k8s (1/7)...
-  tags: kubernetes
+  tags: setup
   become: true
   apt_key:
     url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
@@ -163,7 +163,7 @@
   delay: 5
 
 - name: Installing k8s (2/7)...
-  tags: kubernetes
+  tags: setup
   ansible.builtin.apt_repository:
     repo: deb https://apt.kubernetes.io/ kubernetes-xenial main # Substitute with {{ ansible_distribution_release }} when new releases will be added
     state: present
@@ -172,12 +172,12 @@
     filename: /etc/apt/sources.list.d/kubernetes
 
 - name: Installing k8s (3/7)...
-  tags: kubernetes
+  tags: setup
   apt:
     update_cache: yes
 
 - name: Installing k8s (4/7)...
-  tags: kubernetes
+  tags: setup
   package:
     name:
       - kubelet={{k8s_version}}
@@ -190,19 +190,19 @@
     update_cache: yes
 
 - name: Installing k8s (5/7)...
-  tags: kubernetes
+  tags: setup
   dpkg_selections:
     name: kubeadm
     selection: hold
 
 - name: Installing k8s (6/7)...
-  tags: kubernetes
+  tags: setup
   dpkg_selections:
     name: kubelet
     selection: hold
 
 - name: Installing k8s (7/7)...
-  tags: kubernetes
+  tags: setup
   dpkg_selections:
     name: kubectl
     selection: hold

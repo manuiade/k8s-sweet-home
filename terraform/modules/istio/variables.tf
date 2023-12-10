@@ -1,18 +1,16 @@
 variable "helm_chart" {
   type = object({
-    name             = string
-    chart            = string
     repository       = optional(string, null)
     version          = optional(string, null)
-    namespace        = optional(string, "default")
-    create_namespace = optional(bool, false)
+    namespace        = optional(string, "istio-system")
+    create_namespace = optional(bool, true)
     force_update     = optional(bool, false)
     values           = optional(list(string), [])
     set              = optional(map(string), {})
   })
 }
 
-variable "deploy_sample_self_signed_crt" {
-  type    = bool
-  default = false
+variable "defaultRevision" {
+  type = string
+  default = "default"
 }

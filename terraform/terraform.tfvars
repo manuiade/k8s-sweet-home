@@ -46,12 +46,30 @@ prometheus = {
     create_namespace = true
   }
   expose_prometheus_traefik = true # need traefik and metallb to be installed
-  expose_grafana_traefik = true # need traefik and metallb to be installed
+  expose_grafana_traefik    = true # need traefik and metallb to be installed
   # grafana dashboards = 12740, 3119, 6417
 }
 
+tekton = {
+  install = true
+  public_tasks = [
+    "https://raw.githubusercontent.com/tektoncd/catalog/main/task/git-clone/0.9/git-clone.yaml",
+    "https://raw.githubusercontent.com/tektoncd/catalog/main/task/kaniko/0.6/kaniko.yaml"
+  ]
+}
+
+istio = {
+  install = true
+  helm_chart = {
+    repository       = "https://istio-release.storage.googleapis.com/charts"
+    namespace        = "istio-system"
+    create_namespace = true
+  }
+  defaultRevision = "default"
+}
+
 hello_nginx = {
-    deployment = true
-    service = true
-    ingress_https = true # requires traefik and cert_manager previously installed
+  deployment    = true
+  service       = true
+  ingress_https = true # requires traefik and cert_manager previously installed
 }

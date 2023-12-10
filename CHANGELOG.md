@@ -2,6 +2,25 @@
 
 All changes to this repository will be documented in this file.
 
+## [1.6.0] - 2023-12-10
+
+### Added
+
+Added the possibility to install additional kubernetes components using Terraform scripts (kubectl provider) for:
+
+- Istio service mesh via Helm
+
+- Tekton for CI/CD (pipelines, triggers, dashboard, interceptors)
+
+### Fixed
+
+- Ansible roles for k8s install do not also try to setup NFS server (done in Step 4)
+
+- Changed kubectl TF provider from gavinbunney to alekc due to bug in TF 1.28 about state refresh
+
+- Small fixes on other TF module resources (path change, code refactoring etc.)
+
+
 ## [1.5.0] - 2023-11-26
 
 ### Added

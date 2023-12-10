@@ -11,5 +11,5 @@ esac
 if [[ $ow == 0 ]]; then
   echo "Running ansible playbook.."
   cd ansible
-  ansible-playbook install-k8s.yaml
+  ansible-playbook install-k8s.yaml  --tags setup,k8s
 fi

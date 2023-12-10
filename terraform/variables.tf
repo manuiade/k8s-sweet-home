@@ -58,14 +58,36 @@ variable "prometheus" {
       set              = optional(map(string), {})
     })
     expose_prometheus_traefik = optional(bool, false)
-    expose_grafana_traefik = optional(bool, false)
+    expose_grafana_traefik    = optional(bool, false)
   })
 }
 
+variable "tekton" {
+  type = object({
+    install                    = bool
+    public_tasks = optional(list(string), [])
+  })
+}
+
+variable "istio" {
+  type = object({
+    install = bool
+    helm_chart = object({
+      repository       = optional(string, null)
+      version          = optional(string, null)
+      namespace        = optional(string, "istio-system")
+      create_namespace = optional(bool, false)
+      force_update     = optional(bool, false)
+      values           = optional(list(string), [])
+      set              = optional(map(string), {})
+    })
+    defaultRevision = optional(string, "default")
+  })
+}
 variable "hello_nginx" {
   type = object({
-    deployment = optional(bool, false)
-    service = optional(bool, false)
+    deployment    = optional(bool, false)
+    service       = optional(bool, false)
     ingress_https = optional(bool, false)
   })
   default = {}

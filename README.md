@@ -183,8 +183,8 @@ If something get screwed up with your k8s cluster, you can just use the kubeadm 
 
 - [x] Metric server, Prometheus and Grafana as monitoring tools
 
-- [ ] Istio as Service Mesh (with Kiali and Jaeger)
+- [x] Istio as Service Mesh
 
-- [ ] Tekton, for GitOps
+- [x] Tekton, for GitOps
 
 - [ ] Backup and restore plan for etcd

@@ -13,11 +13,11 @@ variable "helm_chart" {
 }
 
 variable "expose_prometheus_traefik" {
-  type = bool
+  type    = bool
   default = false
 }
 
 variable "expose_grafana_traefik" {
-  type = bool
+  type    = bool
   default = false
 }

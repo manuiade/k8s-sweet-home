@@ -18,13 +18,13 @@ resource "helm_release" "cert_manager" {
 }
 
 resource "kubectl_manifest" "sample_self_signed_issuer" {
-  count     = var.deploy_sample_self_signed_crt == true ? 1 : 0
-  yaml_body = file("${path.root}/k8s-manifest/cert-manager/issuer-self-signed.yaml")
-  depends_on = [ helm_release.cert_manager ]
+  count      = var.deploy_sample_self_signed_crt == true ? 1 : 0
+  yaml_body  = file("${path.root}/k8s-manifest/cert-manager/issuer-self-signed.yaml")
+  depends_on = [helm_release.cert_manager]
 }
 
 resource "kubectl_manifest" "sample_self_signed_certificate" {
-  count     = var.deploy_sample_self_signed_crt == true ? 1 : 0
-  yaml_body = file("${path.root}/k8s-manifest/cert-manager/certificate-self-signed.yaml")
-  depends_on = [ kubectl_manifest.sample_self_signed_issuer ]
+  count      = var.deploy_sample_self_signed_crt == true ? 1 : 0
+  yaml_body  = file("${path.root}/k8s-manifest/cert-manager/certificate-self-signed.yaml")
+  depends_on = [kubectl_manifest.sample_self_signed_issuer]
 }

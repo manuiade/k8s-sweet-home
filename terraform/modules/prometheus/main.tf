@@ -18,13 +18,13 @@ resource "helm_release" "prometheus" {
 }
 
 resource "kubectl_manifest" "ingress_prometheus" {
-  count     = var.expose_prometheus_traefik == true ? 1 : 0
-  yaml_body = file("${path.root}/k8s-manifest/prometheus/ingress-prometheus.yaml")
-  depends_on = [ helm_release.prometheus ]
+  count      = var.expose_prometheus_traefik == true ? 1 : 0
+  yaml_body  = file("${path.root}/k8s-manifest/prometheus/ingress-prometheus.yaml")
+  depends_on = [helm_release.prometheus]
 }
 
 resource "kubectl_manifest" "ingress_grafana" {
-  count     = var.expose_grafana_traefik == true ? 1 : 0
-  yaml_body = file("${path.root}/k8s-manifest/prometheus/ingress-grafana.yaml")
-  depends_on = [ helm_release.prometheus ]
+  count      = var.expose_grafana_traefik == true ? 1 : 0
+  yaml_body  = file("${path.root}/k8s-manifest/prometheus/ingress-grafana.yaml")
+  depends_on = [helm_release.prometheus]
 }

@@ -1,14 +1,14 @@
 variable "deployment" {
-  type = bool
+  type    = bool
   default = false
 }
 
 variable "service" {
-  type = bool
+  type    = bool
   default = false
 }
 
 variable "ingress_https" {
-  type = bool
+  type    = bool
   default = false
 }

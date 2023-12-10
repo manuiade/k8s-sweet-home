@@ -5,7 +5,7 @@ terraform {
       version = "~> 3.1.0"
     }
     kubectl = {
-      source = "gavinbunney/kubectl"
+      source = "alekc/kubectl"
     }
     helm = {
       source = "hashicorp/helm"

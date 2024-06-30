@@ -51,7 +51,7 @@ prometheus = {
 }
 
 tekton = {
-  install = true
+  install = false
   public_tasks = [
     "https://raw.githubusercontent.com/tektoncd/catalog/main/task/git-clone/0.9/git-clone.yaml",
     "https://raw.githubusercontent.com/tektoncd/catalog/main/task/kaniko/0.6/kaniko.yaml"
@@ -59,7 +59,7 @@ tekton = {
 }
 
 istio = {
-  install = true
+  install = false
   helm_chart = {
     repository       = "https://istio-release.storage.googleapis.com/charts"
     namespace        = "istio-system"
@@ -68,8 +68,8 @@ istio = {
   defaultRevision = "default"
 }
 
-hello_nginx = {
-  deployment    = true
-  service       = true
-  ingress_https = true # requires traefik and cert_manager previously installed
-}
+# hello_nginx = {
+#   deployment    = true
+#   service       = true
+#   ingress_https = true # requires traefik and cert_manager previously installed
+# }

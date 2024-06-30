@@ -5,6 +5,9 @@
       shell:
         cmd: |
           kubeadm reset -f
+          rm -rf ~/.kube
+          rm -rf /etc/kubernetes
+          rm -rf /var/lib/etcd/
 
     - name: Restarting hosts...
       reboot:

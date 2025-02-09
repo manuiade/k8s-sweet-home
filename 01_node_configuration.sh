@@ -2,7 +2,7 @@
 
 
 boot_offset=1048576
-root_offset=269484032
+root_offset=537919488
 
 ### ------------------------------------------- START FUNCTIONS DEFINITION -------------------------------------------
 
@@ -110,7 +110,7 @@ function node_configuration {
     sudo umount mnt
     sudo rm -rf mnt
 
-    # Mount the / sector (512 byte * 526336)
+    # Mount the / sector (512 byte * 1050624)
     sudo mkdir mnt
     sudo mount -o offset=$root_offset os/$node-image.img mnt/
     cd nodes/$node

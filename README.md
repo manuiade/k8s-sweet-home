@@ -35,7 +35,7 @@ Ubuntu server pre-built images are used in order to speed up the installation pr
 
 Use the following command to prepare everything for nodes configuration
 
-```
+```bash
 ./00_requirements.sh
 ```
 
@@ -50,7 +50,7 @@ You can now configure your node files, including network information, hostname, 
 Note that in the 01_node_configuration.sh script <b>YOU</b> need to substitute the 2 offset value of the /boot sector and / sector with the specific value of your downloaded image (lines 4 and 5 of the script).
 You can use the command:
 
-```
+```bash
 fdisk -l <IMAGE_FILE.img>
 ```
 
@@ -65,13 +65,20 @@ A more elegant solution will be soon provided (note that the preset values shoul
 The script creates the custom configuration files for each node and recompress the images to make them ready to be flashed on SD cards:
 
 Launch the script to create the custom OS images for each node:
-```
+
+```bash
 ./01_node_configuration.sh
 ```
 
 ### Boot your raspberry
 
-- Use your favourite tool to flash the OS images generated from previous step into your SD cards
+- Use your favourite tool to flash the OS images generated from previous step into your SD cards, otherwise you can do that using the following Linux command:
+
+```bash
+sudo umount /dev/sdX 
+xzcat os/<IMAGE>.img.xz | sudo dd of=/dev/sdX conv=fdatasync status=progress
+```
+
 - Insert your cards into the raspberry and power them on
 - The first boot could require up to 5 minutes 
 - You can test connectivity to each of your boards just by pinging them (if ping to the boards does not work try to reboot them), and if everything is ok, you can now procede to install Kubernetes on your nodes
@@ -83,7 +90,7 @@ We will proceed by installing k8s via kubeadm, using one master node and any num
 
 An Ansible playbook will take care of all the operations needed, so you just need to execute the following command:
 
-```
+```bash
 ./02_install_k8s.sh
 ```
 
@@ -93,7 +100,7 @@ You will find the kubeconfig file needed to access the cluster at ./ansible/stat
 
 Check you master and worker nodes are ready (you need to wait a few minutes to see them as Ready):
 
-```
+```bash
 kubectl --kubeconfig ./ansible/static/kubeconfig get nodes
 ```
 
@@ -105,7 +112,7 @@ kubectl --kubeconfig ./ansible/static/kubeconfig get nodes
 
 If you chose the Cilium CNI, after ansible setup you have to install to your cluster cilium components. In order to do so update your local kubeconfig (usually $HOME/.kube/config) to include the cluster kubeconfig (./ansible/static/kubeconfig), then run:
 
-```
+```bash
 ./03_cilium_install.sh
 ```
 
@@ -122,7 +129,7 @@ A dedicated playbook is provided to setup a NFS server and clients in the follow
 
 Before running the playbook via the provided script, update the *config.ini* file inserting the device path of the disk inserted into the master board (simply run a lsblk command on the master board to find the path, usually /dev/sda1 for the first disk), then simply run:
 
-```
+```bash
 ./04_setup_nfs.sh
 ```
 
@@ -139,7 +146,7 @@ Currently the following components have been added:
 
 Navigate into the terraform directory and enable flags on the *terraform.tfvars* file based on the component you want to install using Terraform:
 
-```
+```bash
 # modify terraform.tfvars content
 cd terraform
 ../local-requirements/terraform init
@@ -155,7 +162,7 @@ Some ansible playbooks are also provided to easily manage operations on the rasp
 
 ### Reboot cluster
 
-```
+```bash
 cd ansible
 ansible-playbook reboot-cluster.yaml
 ```
@@ -164,7 +171,7 @@ ansible-playbook reboot-cluster.yaml
 
 If something get screwed up with your k8s cluster, you can just use the kubeadm reset command to clean up your master and worker nodes, and re-installing kubernetes again with the following script:
 
-```
+```bash
 ./reset_cluster.sh
 ```
 

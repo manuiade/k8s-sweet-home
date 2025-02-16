@@ -2,6 +2,17 @@
 
 All changes to this repository will be documented in this file.
 
+## [1.6.1] - 2025-02-16
+
+### Fixed
+
+- Small fix on ansible playbook which installs k8s due to changes on package repository configuration
+
+- Updated node configuration script to reflect correct block size during SD card preparation
+
+- Small update on README
+
+
 ## [1.6.0] - 2023-12-10
 
 ### Added

@@ -151,57 +151,55 @@
 
 # K8s packages installation
 
-- name: Installing k8s (1/7)...
+- name: Installing k8s (1/8)...
   tags: setup
   become: true
-  apt_key:
-    url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
-    state: present
-  register: k8s_apt_key
-  until: k8s_apt_key is succeeded
-  retries: 5
-  delay: 5
+  file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: '0755'
 
-- name: Installing k8s (2/7)...
+- name: Installing k8s (2/8)...
+  tags: setup
+  ansible.builtin.shell: curl -fsSL https://pkgs.k8s.io/core:/stable:/v{{ k8s_version.split('.')[:2] | join('.')}}/deb/Release.key | gpg --dearmor --yes -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+
+- name: Installing k8s (3/8)...
   tags: setup
   ansible.builtin.apt_repository:
-    repo: deb https://apt.kubernetes.io/ kubernetes-xenial main # Substitute with {{ ansible_distribution_release }} when new releases will be added
+    repo: "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v{{ k8s_version.split('.')[:2] | join('.')}}/deb/ /"
     state: present
-    update_cache: true
-    mode: 0644
-    filename: /etc/apt/sources.list.d/kubernetes
 
-- name: Installing k8s (3/7)...
+- name: Installing k8s (4/8)...
   tags: setup
   apt:
     update_cache: yes
 
-- name: Installing k8s (4/7)...
+- name: Installing k8s (5/8)...
   tags: setup
   package:
     name:
-      - kubelet={{k8s_version}}
-      - kubeadm={{k8s_version}}
-      - kubectl={{k8s_version}}
+      - kubelet
+      - kubeadm
+      - kubectl
       - ntp
       - net-tools
       - ipvsadm
     #state: latest
     update_cache: yes
 
-- name: Installing k8s (5/7)...
+- name: Installing k8s (6/8)...
   tags: setup
   dpkg_selections:
     name: kubeadm
     selection: hold
 
-- name: Installing k8s (6/7)...
+- name: Installing k8s (7/8)...
   tags: setup
   dpkg_selections:
     name: kubelet
     selection: hold
 
-- name: Installing k8s (7/7)...
+- name: Installing k8s (8/8)...
   tags: setup
   dpkg_selections:
     name: kubectl

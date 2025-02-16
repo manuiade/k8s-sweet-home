@@ -186,7 +186,7 @@ If something get screwed up with your k8s cluster, you can just use the kubeadm 
 
 - [x] Traefik setup as Ingress Controller
 
-- [ ] NFS Volumes (external-subdir for NFS dynamic provisioning via PVC)
+- [ ] NFS Volumes (configure RAIDX with multiple drives)
 
 - [x] Metric server, Prometheus and Grafana as monitoring tools
 
